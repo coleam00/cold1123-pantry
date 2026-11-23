@@ -67,6 +67,7 @@ async function planTwoRecipes(app: ReturnType<typeof createApp>) {
   expect(recipes.map((r) => r.name)).toEqual(["Curry", "Pilaf"]);
   expect((await post(app, "/api/plan", { day: 0, recipeId: recipes[0]!.id })).status).toBe(201);
   expect((await post(app, "/api/plan", { day: 2, recipeId: recipes[1]!.id })).status).toBe(201);
+  return recipes;
 }
 
 test("two recipes on two days give one combined grocery list", async () => {
@@ -125,4 +126,18 @@ test("recipes and the plan are still there after the database is reopened", asyn
   const after = await (await createApp(db).request("/api/state")).json();
   expect(after).toEqual(before);
   expect((after as { recipes: unknown[] }).recipes).toHaveLength(2);
+});
+
+test("the list comes from the week's plan: unplanned recipes stay off, a recipe planned twice counts twice", async () => {
+  const app = createApp(db);
+  const [curry] = await planTwoRecipes(app);
+  expect((await post(app, "/api/recipes", { name: "Cake", ingredients: [{ name: "flour", quantity: 200, unit: "g" }] })).status).toBe(201);
+  expect((await post(app, "/api/plan", { day: 4, recipeId: curry!.id })).status).toBe(201);
+  const state = (await (await app.request("/api/state")).json()) as { groceryList: unknown };
+  expect(state.groceryList).toEqual([
+    { name: "Onion", quantity: 5, unit: "pcs" },
+    { name: "rice", quantity: 1000, unit: "g" },
+    { name: "rice", quantity: 1, unit: "kg" },
+    { name: "salt", quantity: null, unit: "" },
+  ]);
 });
