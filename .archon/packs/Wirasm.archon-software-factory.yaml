@@ -1,0 +1,33 @@
+# Settings for the software factory pack (Wirasm/archon-software-factory). Commit this file:
+# every run reads it from its own checkout. Every setting the pack declares is listed; an empty
+# value means the pack's default applies, which holds the project to AGENTS.md and what it
+# points to.
+settings:
+  # What the project is for and what is in and out of scope.
+  product_policy: direction.md
+  triage_policy: direction.md
+
+  # The engineering conventions every change follows (architecture.md is reached from AGENTS.md).
+  plan_policy: engineering.md
+  build_policy: engineering.md
+  review_policy: engineering.md
+  test_policy: engineering.md
+  propose_policy: engineering.md
+
+  # No project document of its own; the pack's default applies. (Discoveries can file up to
+  # three issues after a change lands; nothing starts on them until you order one.)
+  discoveries_policy: ""
+  # When an item is several changes (a PRD, an epic), the pack's default split applies.
+  split_policy: ""
+  # CI (.github/workflows/ci.yml) starts on every pull request by itself; nothing else to start.
+  host_policy: ""
+  # Shadow-only in the pack today: recorded, never acted on.
+  admit_policy: ""
+  # Which ready changes may land without asking you. Empty: the land gate asks every time, and
+  # answering `land` makes the factory merge.
+  land_policy: ""
+  # Shadow-only: the project's declared checks run each round and are recorded.
+  checks_file: ""
+
+  # The command that proves a change: the same one CI runs, after installing dependencies.
+  validate_command: bun install && bun run check

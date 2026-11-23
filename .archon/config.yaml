@@ -1,0 +1,19 @@
+# Archon project settings. Commit this file: every factory run reads it from its own checkout.
+
+# Which models the factory uses. The pack's stages ask for a role (@builder, @reviewer, ...)
+# that falls back to one of these three tiers. Keep the block for your coding agent and delete
+# the other two.
+
+# Claude Code (Cole's Claude factory: 24 PRs merged, 0 failed runs, 2026-11-21)
+assistant: claude
+tiers:
+  large: { provider: claude, model: claude-opus-5-5 }
+  medium: { provider: claude, model: claude-sonnet-5-5 }
+  small: { provider: claude, model: claude-haiku-5-5 }
+
+worktree:
+  # Base every worktree on main without asking GitHub first (a failed lookup kills the run).
+  baseBranch: main
+  # Each new worktree gets its dependencies, so `bun run check` works in it at once.
+  postCreate:
+    - bun install

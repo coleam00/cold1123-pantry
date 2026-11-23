@@ -1,0 +1,36 @@
+# The factory reads this check on every pull request it opens, and you merge only when it
+# is green. It runs the project's one test command on every pull request and every push
+# to main.
+#
+# Before Phase 1 lands there is no package.json yet, so it passes with a notice.
+# From then on it runs `bun run check`, which the PRD's Phase 1 creates.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    # Windows too: half of the people building these apps run them on Windows, and tests
+    # that pass on Linux can still fail there (an open SQLite file can't be deleted, paths
+    # use backslashes). The factory only fixes what its CI shows it.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install
+        if: hashFiles('package.json') != ''
+        run: bun install
+      - name: Check
+        if: hashFiles('package.json') != ''
+        run: bun run check
+      - name: No project yet
+        if: hashFiles('package.json') == ''
+        run: echo "No package.json yet. Phase 1 adds it, and from then on this job runs 'bun run check'."
