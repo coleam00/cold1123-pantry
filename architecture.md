@@ -17,7 +17,7 @@
 - `src/server/app.ts`: the API routes for recipes, plan, grocery list, pantry, planning sessions and waste log, plus `/health`.
 - `src/server/db.ts`: the SQLite file and its tables (schema changes are additive) and `EVENT_TYPES`, the one list of event names.
 - `src/server/main.ts`: production entry; reads `PORT` and `DATA_DIR` (default `data/`).
-- `src/server/grocery.ts` (new): pure function that builds the grocery list from planned recipes and pantry items. All combining and subtracting rules live here and are unit-tested without a database.
+- `src/server/grocery.ts`: pure function that builds the grocery list from planned recipes and pantry items. All combining and subtracting rules live here and are unit-tested without a database.
 - `src/web/App.tsx`: the first screen. Phase 1 replaces the placeholder with recipes, the week and the list on one screen. Phase 2 adds a pantry screen; Phase 3 adds "Use it up".
 - `scripts/stats.ts`: `bun run stats`; reads events and the waste log and prints the five lines in `PRD.md`, with zeros and `-` when empty.
 - Data lives in one SQLite file under `DATA_DIR` (default `data/app.db`), created on first start, never committed.
